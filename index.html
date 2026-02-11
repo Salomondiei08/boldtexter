@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BoldText Pro — Convertisseur simple</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Math&family=Noto+Sans+Symbols+2&family=STIX+Two+Math&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f0f23;
+      --card: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #ffffff;
+      --muted: #94a3b8;
+      --light: #e2e8f0;
+      --accent-1: #0f766e;
+      --accent-2: #22c55e;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      --radius-lg: 24px;
+      --radius-md: 12px;
+      --transition: 200ms ease;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Futura", "Futura PT", "Avenir Next", "Avenir", "Nunito Sans", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+    }
+
+    body::before {
+      background:
+        radial-gradient(circle at 20% 20%, rgba(15, 118, 110, 0.35), transparent 45%),
+        radial-gradient(circle at 80% 10%, rgba(34, 197, 94, 0.32), transparent 40%),
+        radial-gradient(circle at 10% 80%, rgba(20, 184, 166, 0.2), transparent 45%),
+        var(--bg);
+    }
+
+    body::after {
+      background: linear-gradient(135deg, rgba(15, 118, 110, 0.16), transparent 60%);
+      z-index: -3;
+    }
+
+    .page {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 20px;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      box-shadow: 0 12px 30px rgba(15, 118, 110, 0.35);
+    }
+
+    .title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .title p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--light);
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      color: var(--light);
+      font-weight: 600;
+    }
+
+    .counter { font-size: 12px; color: var(--muted); }
+
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      resize: vertical;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(15, 15, 35, 0.6);
+      color: var(--text);
+      font-size: 16px;
+      padding: 16px;
+      line-height: 1.6;
+      transition: border var(--transition), box-shadow var(--transition);
+      font-family: "Noto Sans Math", "STIX Two Math", "Noto Sans Symbols 2", "Segoe UI Symbol", "Cambria Math", "Apple Symbols", "Symbola", "Noto Sans", "Arial Unicode MS", system-ui, sans-serif;
+      font-variant-ligatures: none;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: rgba(34, 197, 94, 0.55);
+      box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.28);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .btn {
+      border: none;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+      min-height: 44px;
+    }
+
+    .btn.ghost {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--light);
+    }
+
+    .btn::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 120%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+      transition: transform 500ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 25px rgba(15, 118, 110, 0.25);
+    }
+
+    .btn:hover::after { transform: translateX(220%); }
+
+    footer {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      padding-top: 4px;
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 50;
+    }
+
+    .toast {
+      background: rgba(15, 15, 35, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      color: var(--light);
+      min-width: 220px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: toast-in 250ms ease forwards;
+    }
+
+    @keyframes toast-in {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .page { padding: 24px 16px 40px; }
+      textarea { min-height: 180px; }
+    }
+
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(34, 197, 94, 0.5);
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="logo">𝗕</div>
+      <div class="title">
+        <h1>BoldText Pro</h1>
+        <p>Écrivez, mettez en gras, puis copiez en un clic.</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="label-row">
+        <span>Éditeur de texte</span>
+        <span class="counter" id="inputCounter">0 caractères</span>
+      </div>
+      <textarea id="inputText" aria-label="Éditeur de texte" placeholder="Tapez ici, puis utilisez Ctrl+B / Cmd+B pour le gras..."></textarea>
+      <div class="actions">
+        <button class="btn" id="boldButton" type="button">Mettre en gras</button>
+        <button class="btn" id="copyButton" type="button">Tout copier</button>
+        <button class="btn ghost" id="clearButton" type="button">Effacer tout</button>
+      </div>
+    </section>
+
+    <footer>
+      Simple, gratuit, sans suivi. Compatible Facebook.
+    </footer>
+  </div>
+
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <script>
+    const inputText = document.getElementById("inputText");
+    const inputCounter = document.getElementById("inputCounter");
+    const toastContainer = document.getElementById("toastContainer");
+
+    const UPPER_A = "A".codePointAt(0);
+    const LOWER_A = "a".codePointAt(0);
+    const DIGIT_0 = "0".codePointAt(0);
+    const BOLD_UPPER_A = 0x1D5D4;
+    const BOLD_LOWER_A = 0x1D5EE;
+    const BOLD_DIGIT_0 = 0x1D7EC;
+
+    function isBoldChar(char) {
+      const code = char.codePointAt(0);
+      return (
+        (code >= BOLD_UPPER_A && code <= BOLD_UPPER_A + 25) ||
+        (code >= BOLD_LOWER_A && code <= BOLD_LOWER_A + 25) ||
+        (code >= BOLD_DIGIT_0 && code <= BOLD_DIGIT_0 + 9)
+      );
+    }
+
+    function convertToBold(text) {
+      let result = "";
+      for (const char of text) {
+        const code = char.codePointAt(0);
+        if (code >= UPPER_A && code <= UPPER_A + 25) {
+          result += String.fromCodePoint(code - UPPER_A + BOLD_UPPER_A);
+        } else if (code >= LOWER_A && code <= LOWER_A + 25) {
+          result += String.fromCodePoint(code - LOWER_A + BOLD_LOWER_A);
+        } else if (code >= DIGIT_0 && code <= DIGIT_0 + 9) {
+          result += String.fromCodePoint(code - DIGIT_0 + BOLD_DIGIT_0);
+        } else {
+          result += char;
+        }
+      }
+      return result;
+    }
+
+    function convertToNormal(text) {
+      let result = "";
+      for (const char of text) {
+        const code = char.codePointAt(0);
+        if (code >= BOLD_UPPER_A && code <= BOLD_UPPER_A + 25) {
+          result += String.fromCodePoint(code - BOLD_UPPER_A + UPPER_A);
+        } else if (code >= BOLD_LOWER_A && code <= BOLD_LOWER_A + 25) {
+          result += String.fromCodePoint(code - BOLD_LOWER_A + LOWER_A);
+        } else if (code >= BOLD_DIGIT_0 && code <= BOLD_DIGIT_0 + 9) {
+          result += String.fromCodePoint(code - BOLD_DIGIT_0 + DIGIT_0);
+        } else {
+          result += char;
+        }
+      }
+      return result;
+    }
+
+    function isMostlyBold(text) {
+      const chars = Array.from(text).filter((char) => /\S/.test(char));
+      if (chars.length === 0) return false;
+      const boldChars = chars.filter(isBoldChar).length;
+      return boldChars >= Math.ceil(chars.length * 0.6);
+    }
+
+    function updateCounter() {
+      inputCounter.textContent = `${inputText.value.length} caractères`;
+    }
+
+    function showToast(message) {
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.textContent = message;
+      toastContainer.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(10px)";
+        setTimeout(() => toast.remove(), 250);
+      }, 3000);
+    }
+
+    function toggleBoldSelection() {
+      const start = inputText.selectionStart;
+      const end = inputText.selectionEnd;
+      const hasSelection = start !== end;
+
+      if (!hasSelection) {
+        if (!inputText.value) {
+          showToast("Ajoutez du texte avant.");
+          return;
+        }
+        inputText.value = isMostlyBold(inputText.value)
+          ? convertToNormal(inputText.value)
+          : convertToBold(inputText.value);
+      } else {
+        const before = inputText.value.slice(0, start);
+        const selection = inputText.value.slice(start, end);
+        const after = inputText.value.slice(end);
+        const toggled = isMostlyBold(selection) ? convertToNormal(selection) : convertToBold(selection);
+        inputText.value = `${before}${toggled}${after}`;
+        inputText.setSelectionRange(start, start + toggled.length);
+      }
+
+      updateCounter();
+      showToast("Gras appliqué.");
+    }
+
+    function copyAll() {
+      if (!inputText.value) {
+        showToast("Rien à copier.");
+        return;
+      }
+
+      const text = inputText.value;
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text)
+          .then(() => showToast("Copié."))
+          .catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const helper = document.createElement("textarea");
+      helper.value = text;
+      helper.setAttribute("readonly", "readonly");
+      helper.style.position = "fixed";
+      helper.style.top = "0";
+      helper.style.left = "-9999px";
+      helper.style.opacity = "0";
+      document.body.appendChild(helper);
+      helper.focus();
+      helper.select();
+      let succeeded = false;
+      try {
+        succeeded = document.execCommand("copy");
+      } catch (error) {
+        succeeded = false;
+      }
+      document.body.removeChild(helper);
+      if (succeeded) {
+        showToast("Copié.");
+      } else {
+        inputText.focus();
+        inputText.select();
+        showToast("Sélectionné : Ctrl+C / Cmd+C.");
+      }
+    }
+
+    function clearAll() {
+      inputText.value = "";
+      updateCounter();
+      showToast("Effacé.");
+    }
+
+    inputText.addEventListener("input", updateCounter);
+    document.getElementById("boldButton").addEventListener("click", toggleBoldSelection);
+    document.getElementById("copyButton").addEventListener("click", copyAll);
+    document.getElementById("clearButton").addEventListener("click", clearAll);
+
+    inputText.addEventListener("keydown", (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "b") {
+        event.preventDefault();
+        toggleBoldSelection();
+      }
+    });
+
+    updateCounter();
+  </script>
+</body>
+</html>
